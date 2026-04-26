@@ -38,14 +38,14 @@
       transition:width .05s linear;
     }
 
-    /* ── LEFT SIDEBAR ── */
+    /* ── RIGHT SIDEBAR ── */
     #sidebar {
-      position:fixed; left:0; top:0; bottom:0;
+      position:fixed; right:0; top:0; bottom:0;
       width:var(--sidebar-w);
       z-index:500;
       display:flex; flex-direction:column;
       background:var(--black);
-      border-right:1px solid rgba(163,230,53,0.1);
+      border-left:1px solid rgba(163,230,53,0.1);
     }
     .nl {
       flex:1; display:flex; flex-direction:column;
@@ -59,26 +59,32 @@
       color:rgba(163,230,53,0.15);
       position:relative; z-index:1;
       transition:color .5s ease, text-shadow .5s ease, transform .5s cubic-bezier(.22,1,.36,1), opacity .5s ease;
-      transform:translateX(-30px);
+      transform:translateX(30px);
       opacity:0.2;
       letter-spacing:0;
     }
     .nl-char.active {
       color:var(--lime);
-      text-shadow:0 0 20px rgba(163,230,53,0.7);
+      text-shadow:none;
       transform:translateX(0);
       opacity:1;
     }
     .nl-char.done {
-      color:rgba(163,230,53,0.4);
-      text-shadow:0 0 12px rgba(163,230,53,0.3);
+      color:var(--lime);
+      text-shadow:none;
       transform:translateX(0);
-      opacity:0.6;
+      opacity:1;
+    }
+    body.all-glow .nl-char {
+      color:var(--lime);
+      text-shadow:0 0 18px rgba(163,230,53,0.8), 0 0 6px rgba(163,230,53,0.6);
+      transform:translateX(0);
+      opacity:1;
     }
 
     /* ── NAV ── */
     nav {
-      position:fixed; top:0; left:var(--sidebar-w); right:0;
+      position:fixed; top:0; left:0; right:var(--sidebar-w);
       z-index:400;
       display:flex; justify-content:space-between; align-items:center;
       padding:1.4rem 4rem;
@@ -109,17 +115,17 @@
       position:relative; min-height:100vh;
       overflow:hidden;
       display:flex; align-items:center;
-      padding:120px 60px 80px calc(var(--sidebar-w) + 60px);
+      padding:120px calc(var(--sidebar-w) + 60px) 80px 60px;
     }
 
     /* ── BACKGROUND LETTER ── */
     .bg-ltr {
       position:absolute;
-      right:-5vw; top:50%;
+      left:-5vw; top:50%;
       font-family:'Syne',sans-serif;
       font-size:68vw; font-weight:800; line-height:1;
       letter-spacing:-8vw;
-      -webkit-text-stroke:2px rgba(0,0,0,0.04);
+      -webkit-text-stroke:2px rgba(163,230,53,0.22);
       color:transparent;
       transform:translateY(-50%);
       pointer-events:none; user-select:none;
@@ -304,7 +310,7 @@
     .vision-list li::before { content:'✦'; color:var(--blue); }
 
     /* ── H: HIRE ── */
-    #s8 { background:var(--blue); color:var(--white); }
+    #s8 { background:var(--black); color:var(--white); }
     #s8 .bg-ltr { -webkit-text-stroke:2px rgba(255,255,255,0.06); }
     .hire-inner { text-align:left; }
     .hire-inner .sub-h { font-size:clamp(2.5rem,6vw,6.5rem); letter-spacing:-3px; margin-bottom:2rem; color:white; }
@@ -360,19 +366,23 @@
     .dock-item {
       width:44px; height:44px;
       border-radius:12px;
-      background:rgba(255,255,255,0.1);
+      background:rgba(255,255,255,0.08);
       display:flex; align-items:center; justify-content:center;
       cursor:pointer;
-      transition:background .3s, transform .3s;
+      transition:background .3s, transform .3s, color .3s, box-shadow .3s;
       position:relative;
       text-decoration:none;
-      color:var(--black);
-      font-size:20px;
+      color:var(--white);
     }
+    .dock-item iconify-icon { display:flex; transition:opacity .25s; }
+    .dock-item .ic-fill { position:absolute; opacity:0; }
+    .dock-item:hover .ic-line { opacity:0; }
+    .dock-item:hover .ic-fill { opacity:1; }
     .dock-item:hover {
-      background:rgba(163,230,53,0.3);
-      transform:scale(1.15) translateY(-8px);
-      box-shadow:0 0 16px rgba(163,230,53,0.5);
+      background:rgba(163,230,53,0.18);
+      color:var(--lime);
+      transform:scale(1.18) translateY(-10px);
+      box-shadow:0 0 22px rgba(163,230,53,0.55), 0 0 40px rgba(163,230,53,0.35);
     }
     .dock-label {
       position:absolute; bottom:100%; left:50%;
@@ -399,10 +409,10 @@
 
     /* ── MOBILE ── */
     @media(max-width:900px){
-      #sidebar{ left:auto; right:0; border-right:none; border-left:1px solid rgba(163,230,53,0.1); width:var(--sidebar-w); }
-      nav{ padding:1rem 1.5rem; left:auto; right:var(--sidebar-w); }
+      #sidebar{ right:0; left:auto; border-left:1px solid rgba(163,230,53,0.1); width:var(--sidebar-w); }
+      nav{ padding:1rem 1.5rem; left:0; right:var(--sidebar-w); }
       .nav-links{ display:none; }
-      section{ padding:100px 1.5rem 80px 1.5rem; }
+      section{ padding:100px calc(var(--sidebar-w) + 1rem) 80px 1.5rem; }
       .about-grid,.design-grid,.ai-grid,.exp-grid{ grid-template-columns:1fr; gap:3rem; }
       .exp-stats{ grid-template-columns:1fr 1fr; }
     }
@@ -444,27 +454,33 @@
 
 <!-- MAC DOCK -->
 <div id="dock">
-  <a href="mailto:chelley.sankeerth@gmail.com" class="dock-item" target="_blank">
-    <span>✉</span>
+  <a href="mailto:chelley.sankeerth@gmail.com" class="dock-item" target="_blank" aria-label="Email">
+    <iconify-icon class="ic-line" icon="lucide:mail" width="22" height="22"></iconify-icon>
+    <iconify-icon class="ic-fill" icon="mdi:email" width="22" height="22"></iconify-icon>
     <span class="dock-label">Email</span>
   </a>
-  <a href="tel:+919949317916" class="dock-item" target="_blank">
-    <span>☎</span>
+  <a href="tel:+919949317916" class="dock-item" target="_blank" aria-label="Call">
+    <iconify-icon class="ic-line" icon="lucide:phone" width="22" height="22"></iconify-icon>
+    <iconify-icon class="ic-fill" icon="mdi:phone" width="22" height="22"></iconify-icon>
     <span class="dock-label">Call</span>
   </a>
-  <a href="https://linkedin.com/in/sankeerthchelley" class="dock-item" target="_blank">
-    <span>in</span>
+  <a href="https://linkedin.com/in/sankeerthchelley" class="dock-item" target="_blank" aria-label="LinkedIn">
+    <iconify-icon class="ic-line" icon="lucide:linkedin" width="22" height="22"></iconify-icon>
+    <iconify-icon class="ic-fill" icon="mdi:linkedin" width="22" height="22"></iconify-icon>
     <span class="dock-label">LinkedIn</span>
   </a>
-  <a href="https://github.com/sankeerthchelley" class="dock-item" target="_blank">
-    <span>⚙</span>
+  <a href="https://github.com/sankeerthchelley" class="dock-item" target="_blank" aria-label="GitHub">
+    <iconify-icon class="ic-line" icon="lucide:github" width="22" height="22"></iconify-icon>
+    <iconify-icon class="ic-fill" icon="mdi:github" width="22" height="22"></iconify-icon>
     <span class="dock-label">GitHub</span>
   </a>
-  <a href="https://behance.net/sankeerthchelley" class="dock-item" target="_blank">
-    <span>◈</span>
+  <a href="https://behance.net/sankeerthchelley" class="dock-item" target="_blank" aria-label="Behance">
+    <iconify-icon class="ic-line" icon="lucide:palette" width="22" height="22"></iconify-icon>
+    <iconify-icon class="ic-fill" icon="mdi:palette" width="22" height="22"></iconify-icon>
     <span class="dock-label">Behance</span>
   </a>
 </div>
+<script src="https://code.iconify.design/iconify-icon/2.1.0/iconify-icon.min.js"></script>
 
 <!-- ─────────────── S ─────────────── -->
 <section id="s0" data-i="0" data-dark="true">
@@ -763,14 +779,16 @@ const progressBar= document.getElementById('progress-bar');
 const dock       = document.getElementById('dock');
 
 const letterState = Array(9).fill('idle');
+let reachedBottom = false;
 
 function setLetterState(i, state) {
+  // Once a letter is revealed (active/done), never revert to idle
+  if (letterState[i] !== 'idle' && state === 'idle') return;
   if (letterState[i] === state) return;
   letterState[i] = state;
   const ch = nlChars[i];
   ch.classList.remove('active', 'done');
-  if (state === 'active') ch.classList.add('active');
-  if (state === 'done')   ch.classList.add('done');
+  if (state === 'active' || state === 'done') ch.classList.add('active');
 }
 
 // ── SCROLL HANDLER ──
@@ -815,6 +833,12 @@ function onScroll() {
   } else {
     dock.classList.remove('show');
   }
+
+  // ALL-GLOW: latch on once user reaches bottom; glow all letters until back at top
+  const docBottomReached = scrollY + winH >= document.documentElement.scrollHeight - 4;
+  if (docBottomReached) reachedBottom = true;
+  if (scrollY <= 4) reachedBottom = false;
+  document.body.classList.toggle('all-glow', reachedBottom);
 
   // cursor theme
   const centerSec = sections.find(s => {
