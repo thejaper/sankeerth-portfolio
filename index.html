@@ -414,11 +414,12 @@
       section{ padding:100px calc(var(--sidebar-w) + 1.2rem) 100px 1.5rem; min-height:110vh; overflow-wrap:anywhere; word-break:break-word; }
       .about-grid,.design-grid,.ai-grid,.exp-grid{ grid-template-columns:1fr; gap:3rem; }
       .exp-stats{ grid-template-columns:1fr 1fr; }
-      .sub-h{ font-size:clamp(1.8rem,7vw,3.5rem); letter-spacing:-1px; }
-      .hero-h{ font-size:clamp(2.5rem,9vw,5rem); }
-      .big-num{ font-size:clamp(4rem,15vw,8rem); }
-      .exp-stat .en{ font-size:2.5rem; }
-      blockquote{ font-size:clamp(1.3rem,5vw,2.5rem); }
+      .sub-h{ font-size:clamp(1.8rem,7vw,3.5rem); letter-spacing:-0.5px; }
+      .hero-h{ font-size:clamp(2.5rem,9vw,5rem); letter-spacing:-1px; }
+      .hero-h .outline{ -webkit-text-stroke:2px currentColor; }
+      .big-num{ font-size:clamp(4rem,15vw,8rem); letter-spacing:-2px; }
+      .exp-stat .en{ font-size:2.5rem; letter-spacing:-1px; }
+      blockquote{ font-size:clamp(1.3rem,5vw,2.5rem); letter-spacing:-0.3px; }
       #dock{ padding:8px 14px; gap:2px; bottom:16px; }
       .dock-item{ width:34px; height:34px; }
       .dock-item:hover{ transform:scale(1.25); }
