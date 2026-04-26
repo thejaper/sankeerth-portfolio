@@ -15,6 +15,41 @@
       --sidebar-w: 72px;
       --mobile-bar-h: 48px;
     }
+
+    /* ── FLOATING CONTACT BAR ── */
+    #contact-bar {
+      position:fixed; top:0; left:0; right:0;
+      height:60px; z-index:300;
+      background:rgba(10,10,11,0.92);
+      backdrop-filter:blur(20px);
+      border-bottom:1px solid rgba(163,230,53,0.15);
+      display:none; flex-direction:row; align-items:center; justify-content:space-between;
+      padding:0 2rem;
+      animation:slideDown .5s cubic-bezier(.22,1,.36,1);
+    }
+    #contact-bar.show { display:flex; }
+    #contact-bar-text {
+      font-family:'Syne',sans-serif;
+      font-size:.9rem; font-weight:700;
+      color:var(--lime); letter-spacing:1px;
+      text-transform:uppercase;
+    }
+    #contact-bar-links {
+      display:flex; gap:1.5rem; align-items:center;
+    }
+    .contact-link {
+      color:rgba(163,230,53,0.7);
+      text-decoration:none;
+      font-size:.85rem;
+      transition:color .3s;
+      display:flex; align-items:center; gap:.4rem;
+    }
+    .contact-link:hover { color:var(--lime); }
+    .contact-icon {
+      width:16px; height:16px;
+      display:inline-block;
+    }
+    @keyframes slideDown { from{opacity:0;transform:translateY(-60px)} to{opacity:1;transform:none} }
     html { scroll-behavior: smooth; }
     body {
       font-family: 'Inter', sans-serif;
@@ -421,6 +456,28 @@
 <!-- PROGRESS BAR -->
 <div id="progress-bar"></div>
 
+<!-- FLOATING CONTACT BAR -->
+<div id="contact-bar">
+  <div id="contact-bar-text">Contact Sankeerth</div>
+  <div id="contact-bar-links">
+    <a href="mailto:chelley.sankeerth@gmail.com" class="contact-link" title="Email">
+      <span class="contact-icon">✉</span> chelley.sankeerth@gmail.com
+    </a>
+    <a href="tel:+919949317916" class="contact-link" title="Phone">
+      <span class="contact-icon">☎</span> +919949317916
+    </a>
+    <a href="https://linkedin.com/in/sankeerthchelley" class="contact-link" target="_blank" title="LinkedIn">
+      <span class="contact-icon">in</span>
+    </a>
+    <a href="https://github.com/sankeerthchelley" class="contact-link" target="_blank" title="GitHub">
+      <span class="contact-icon">⚙</span>
+    </a>
+    <a href="https://behance.net/sankeerthchelley" class="contact-link" target="_blank" title="Behance">
+      <span class="contact-icon">◈</span>
+    </a>
+  </div>
+</div>
+
 <!-- SIDEBAR: S-A-N-K-E-E-R-T-H -->
 <aside id="sidebar">
   <div id="sidebar-line"></div>
@@ -717,7 +774,7 @@ document.addEventListener('mousemove', e => {
   requestAnimationFrame(animRing);
 })();
 
-document.querySelectorAll('a,button,.proj-row').forEach(el => {
+document.querySelectorAll('a,button,.proj-row,.contact-link').forEach(el => {
   el.addEventListener('mouseenter', () => {
     cur.style.transform = 'translate(-50%,-50%) scale(2.8)';
     ring.style.opacity = '0';
@@ -728,36 +785,57 @@ document.querySelectorAll('a,button,.proj-row').forEach(el => {
   });
 });
 
-// ── SCROLL DIRECTION ──
+// ── SCROLL DIRECTION & STATE ──
 let lastScrollY = window.scrollY;
 let scrollDir   = 1; // 1 = down, -1 = up
+const letterGlow = Array(9).fill(false);
+
 window.addEventListener('scroll', () => {
-  scrollDir   = window.scrollY >= lastScrollY ? 1 : -1;
+  scrollDir = window.scrollY >= lastScrollY ? 1 : -1;
   lastScrollY = window.scrollY;
 }, { passive: true });
 
 // ── CORE REFS ──
 const sections    = [...document.querySelectorAll('section[data-i]')];
+const nlCells     = [...document.querySelectorAll('#sidebar .nl')];
 const nlChars     = [...document.querySelectorAll('#sidebar .nl-char')];
 const bgLetters   = [...document.querySelectorAll('.bg-ltr')];
 const progressBar = document.getElementById('progress-bar');
 const sidebarLine = document.getElementById('sidebar-line');
+const contactBar  = document.getElementById('contact-bar');
 const isMobile    = () => window.innerWidth <= 900;
 
-// ── SIDEBAR LETTER STATE ──
-// Each letter: 'idle' | 'active' | 'done'
+const LETTER_COLORS = [
+  '#a3e635','#2563eb','#7c3aed','#a3e635',
+  '#a3e635','#2563eb','#06b6d4','#f59e0b','#a3e635'
+];
+
+// ── LETTER STATE ──
 const letterState = Array(9).fill('idle');
 
-function setLetterState(i, state) {
-  if (letterState[i] === state) return;
+function setLetterState(i, state, glowActive = false) {
+  if (letterState[i] === state && letterGlow[i] === glowActive) return;
   letterState[i] = state;
+  letterGlow[i] = glowActive;
+
   const ch = nlChars[i];
   ch.classList.remove('active', 'done');
-  if (state === 'active') ch.classList.add('active');
-  if (state === 'done')   ch.classList.add('done');
+
+  if (state === 'active') {
+    ch.classList.add('active');
+  } else if (state === 'done') {
+    ch.classList.add('done');
+  }
+
+  // glow: only when scrolling up and letter is past current scroll position
+  if (glowActive && scrollDir === -1) {
+    ch.style.textShadow = `0 0 24px rgba(163,230,53,0.8), 0 0 48px rgba(163,230,53,0.4)`;
+  } else {
+    ch.style.textShadow = '';
+  }
 }
 
-// ── SIDEBAR LINE FILL ──
+// ── SIDEBAR LINE ──
 function updateSidebarLine(scrollFrac) {
   if (isMobile()) {
     sidebarLine.style.width  = (scrollFrac * 100) + '%';
@@ -765,6 +843,15 @@ function updateSidebarLine(scrollFrac) {
   } else {
     sidebarLine.style.height = (scrollFrac * 100) + '%';
     sidebarLine.style.width  = '1px';
+  }
+}
+
+// ── CONTACT BAR TOGGLE ──
+function updateContactBar(scrollY) {
+  if (scrollY < 100) {
+    contactBar.classList.add('show');
+  } else {
+    contactBar.classList.remove('show');
   }
 }
 
@@ -781,6 +868,9 @@ function onScroll() {
   // sidebar line
   updateSidebarLine(progress);
 
+  // contact bar
+  updateContactBar(scrollY);
+
   // parallax bg letters
   bgLetters.forEach(el => {
     const section = el.closest('section');
@@ -790,18 +880,22 @@ function onScroll() {
     el.style.transform = `translateY(calc(-50% + ${rel * rate}px))`;
   });
 
-  // sidebar letters: active = section currently in view center
+  // sidebar letters with parallax + glow logic
   const winH   = window.innerHeight;
   const centerY = scrollY + winH * 0.5;
+
   sections.forEach((sec, i) => {
     const top = sec.offsetTop;
     const bot = top + sec.offsetHeight;
-    if (centerY >= top && centerY < bot) {
-      setLetterState(i, 'active');
-    } else if (centerY >= bot) {
-      setLetterState(i, 'done');
+    const inView = centerY >= top && centerY < bot;
+    const isPast = centerY >= bot;
+
+    if (inView) {
+      setLetterState(i, 'active', scrollDir === -1);
+    } else if (isPast) {
+      setLetterState(i, 'done', scrollDir === -1 && scrollY > sec.offsetTop);
     } else {
-      setLetterState(i, 'idle');
+      setLetterState(i, 'idle', false);
     }
   });
 
@@ -821,9 +915,8 @@ window.addEventListener('scroll', () => {
 
 onScroll();
 
-// ── CONTENT REVEAL — bidirectional ──
-// Tracks which elements are currently "in" state
-const elState = new Map(); // el -> 'in' | 'out'
+// ── CONTENT REVEAL ──
+const elState = new Map();
 
 const contentObs = new IntersectionObserver(entries => {
   entries.forEach(entry => {
@@ -831,18 +924,14 @@ const contentObs = new IntersectionObserver(entries => {
     const was = elState.get(el) || 'out';
 
     if (entry.isIntersecting) {
-      // entering viewport: always animate in
       el.classList.remove('out-up');
       el.classList.add('in');
       elState.set(el, 'in');
     } else if (was === 'in') {
-      // leaving viewport: reverse direction
       el.classList.remove('in');
       if (scrollDir === 1) {
-        // scrolling down → element exits top → push out upward
         el.classList.add('out-up');
       } else {
-        // scrolling up → element exits bottom → restore original state
         el.classList.remove('out-up');
       }
       elState.set(el, 'out');
@@ -853,11 +942,10 @@ const contentObs = new IntersectionObserver(entries => {
   rootMargin: '0px 0px -60px 0px'
 });
 
-// collect all reveal elements
 const allReveal = [...document.querySelectorAll('.reveal-up,.reveal-left,.reveal-right,.reveal-scale')];
 allReveal.forEach(el => contentObs.observe(el));
 
-// hero: immediate reveal on load
+// hero: immediate
 sections[0].querySelectorAll('.reveal-up,.reveal-left,.reveal-right').forEach((el, k) => {
   setTimeout(() => {
     el.classList.add('in');
@@ -865,7 +953,7 @@ sections[0].querySelectorAll('.reveal-up,.reveal-left,.reveal-right').forEach((e
   }, 300 + k * 80);
 });
 
-// ── SKILL BARS — animate in/out with scroll ──
+// ── SKILL BARS ──
 const barObs = new IntersectionObserver(entries => {
   entries.forEach(entry => {
     entry.target.querySelectorAll('.bar-fill').forEach(bar => {
