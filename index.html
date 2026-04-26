@@ -349,42 +349,48 @@
       position:fixed; bottom:24px; left:50%;
       transform:translateX(-50%);
       z-index:600;
-      background:linear-gradient(135deg,rgba(255,255,255,0.10) 0%,rgba(255,255,255,0.04) 100%);
+      background:linear-gradient(160deg,rgba(255,255,255,0.10) 0%,rgba(10,14,26,0.7) 50%,rgba(255,255,255,0.06) 100%);
       backdrop-filter:blur(60px) saturate(180%) brightness(1.15);
       -webkit-backdrop-filter:blur(60px) saturate(180%) brightness(1.15);
-      border:1px solid rgba(255,255,255,0.16);
-      box-shadow:0 12px 48px rgba(0,0,0,0.6),inset 0 1px 0 rgba(255,255,255,0.14),inset 0 -1px 0 rgba(0,0,0,0.12),0 0 0 0.5px rgba(255,255,255,0.06);
       border-radius:99px;
-      padding:10px 22px;
-      display:flex; gap:8px; align-items:center;
+      padding:11px 22px;
+      display:flex; gap:6px; align-items:center;
       opacity:0;
       pointer-events:none;
-      transition:opacity .5s cubic-bezier(.22,1,.36,1), transform .5s cubic-bezier(.22,1,.36,1);
+      transition:opacity .6s cubic-bezier(.22,1,.36,1);
+      box-shadow:0 12px 50px rgba(0,0,0,0.65),inset 0 1px 0 rgba(255,255,255,0.12),inset 0 -1px 0 rgba(0,0,0,0.18);
+    }
+    #dock::before {
+      content:'';
+      position:absolute; inset:-1.5px;
+      border-radius:99px;
+      background:conic-gradient(from 180deg,rgba(163,230,53,0.8) 0deg,rgba(163,230,53,0.15) 80deg,rgba(255,255,255,0.08) 160deg,rgba(163,230,53,0.2) 220deg,rgba(163,230,53,0.75) 300deg,rgba(163,230,53,0.8) 360deg);
+      z-index:-1;
+      filter:blur(0.5px);
     }
     #dock.show {
       opacity:1;
       pointer-events:auto;
     }
     .dock-item {
-      width:40px; height:40px;
+      width:38px; height:38px;
       border-radius:50%;
       background:transparent;
       display:flex; align-items:center; justify-content:center;
       cursor:pointer;
-      transition:background .3s, transform .3s, color .3s, box-shadow .3s;
+      transition:transform .45s cubic-bezier(.34,1.56,.64,1), color .3s ease, box-shadow .4s ease;
       position:relative;
       text-decoration:none;
-      color:rgba(255,255,255,0.8);
+      color:rgba(255,255,255,0.75);
     }
-    .dock-item iconify-icon { display:flex; transition:opacity .25s; }
+    .dock-item iconify-icon { display:flex; transition:opacity .2s ease; }
     .dock-item .ic-fill { position:absolute; opacity:0; }
     .dock-item:hover .ic-line { opacity:0; }
     .dock-item:hover .ic-fill { opacity:1; }
     .dock-item:hover {
-      background:rgba(163,230,53,0.1);
       color:var(--lime);
-      transform:scale(1.22) translateY(-10px);
-      box-shadow:0 0 20px rgba(163,230,53,0.6), 0 0 44px rgba(163,230,53,0.3);
+      transform:scale(1.35);
+      box-shadow:0 0 18px rgba(163,230,53,0.55), 0 0 40px rgba(163,230,53,0.25);
     }
     .dock-label {
       position:absolute; bottom:100%; left:50%;
@@ -422,8 +428,9 @@
       .big-num{ font-size:clamp(4rem,15vw,8rem); }
       .exp-stat .en{ font-size:2.5rem; }
       blockquote{ font-size:clamp(1.3rem,5vw,2.5rem); }
-      #dock{ padding:8px 16px; gap:4px; bottom:18px; }
-      .dock-item{ width:36px; height:36px; }
+      #dock{ padding:8px 14px; gap:2px; bottom:16px; }
+      .dock-item{ width:34px; height:34px; }
+      .dock-item:hover{ transform:scale(1.25); }
       .out-up.reveal-up,.out-up.reveal-left,.out-up.reveal-right,.out-up.reveal-scale{ opacity:1!important; transform:none!important; }
     }
   </style>
@@ -488,6 +495,11 @@
     <iconify-icon class="ic-line" icon="lucide:palette" width="22" height="22"></iconify-icon>
     <iconify-icon class="ic-fill" icon="mdi:palette" width="22" height="22"></iconify-icon>
     <span class="dock-label">Behance</span>
+  </a>
+  <a href="https://wa.me/919949317916" class="dock-item" target="_blank" aria-label="WhatsApp">
+    <iconify-icon class="ic-line" icon="ic:outline-whatsapp" width="22" height="22"></iconify-icon>
+    <iconify-icon class="ic-fill" icon="ic:baseline-whatsapp" width="22" height="22"></iconify-icon>
+    <span class="dock-label">WhatsApp</span>
   </a>
 </div>
 <script src="https://code.iconify.design/iconify-icon/2.1.0/iconify-icon.min.js"></script>
@@ -835,12 +847,10 @@ function onScroll() {
     }
   });
 
-  // MAC DOCK: show when at last section
+  // MAC DOCK: show once, never hide
   const lastSecTop = sections[8]?.offsetTop || 0;
   if (scrollY + winH * 0.7 >= lastSecTop) {
     dock.classList.add('show');
-  } else {
-    dock.classList.remove('show');
   }
 
   // ALL-GLOW: latch on once user reaches bottom; glow all letters until back at top
